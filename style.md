@@ -1,4 +1,4 @@
-import { open } from 'node:fs/promises';
+import { promises as fsPromises } from "fs";
 import path from "path";
 
 async function calculateSalesTotal(salesFiles) {
@@ -6,7 +6,6 @@ async function calculateSalesTotal(salesFiles) {
 
   for (const file of salesFiles) {
     const data = JSON.parse(await fsPromises.readFile(file, "utf8"));
-
     salesTotal += data.total;
   }
   return salesTotal;
@@ -18,7 +17,7 @@ async function findSalesFiles(folderName) {
   async function findFiles(folderName) {
     const items = await fsPromises.readdir(folderName, { withFileTypes: true });
 
-    for (const item of items) {
+   for (const item of items) {
       if (item.isDirectory()) {
         await findFiles(path.join(folderName, item.name));
       } else {
