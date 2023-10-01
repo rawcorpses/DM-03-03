@@ -1,63 +1,59 @@
-body{
-	color: windowframe;
-	margin:auto;
-	width:600px;
-font-family: 'Reenie Beanie',serif; 
+import { open } from 'node:fs/promises';
+import path from "path";
+
+async function calculateSalesTotal(salesFiles) {
+  let salesTotal = 0;
+
+  for (const file of salesFiles) {
+    const data = JSON.parse(await fsPromises.readFile(file, "utf8"));
+
+    salesTotal += data.total;
+  }
+  return salesTotal;
 }
 
-h1{
-margin:50px 0px 0px 50px;
+async function findSalesFiles(folderName) {
+  let salesFiles = [];
+
+  async function findFiles(folderName) {
+    const items = await fsPromises.readdir(folderName, { withFileTypes: true });
+
+    for (const item of items) {
+      if (item.isDirectory()) {
+        await findFiles(path.join(folderName, item.name));
+      } else {
+        if (path.extname(item.name) === ".json") {
+          salesFiles.push(path.join(folderName, item.name));
+        }
+      }
+    }
+  }
+
+  await findFiles(folderName);
+
+  return salesFiles;
 }
 
+async function main() {
+  const salesDir = path.join(__dirname, "stores");
+  const salesTotalsDir = path.join(__dirname, "salesTotals");
 
-#Tab {
-	position : relative;
-	padding: 10px 0 10px 5px;
-	background: #181A12;
+  try {
+    await fsPromises.mkdir(salesTotalsDir);
+  } catch {
+    console.log(`${salesTotalsDir} already exists.`);
+  }
 
-border: solid #99CC66 1px; 
+  const salesFiles = await findSalesFiles(salesDir);
 
+  const salesTotal = await calculateSalesTotal(salesFiles);
+
+  await fsPromises.writeFile(
+    path.join(salesTotalsDir, "totals.txt"),
+    `Total at ${new Date().toLocaleDateString()} : ${salesTotal}€\r\n`,
+    { flag: "a" }
+  );
+  console.log(`Wrote sales totals to ${salesTotalsDir}`);
 }
 
-body>#Tab {width:600px;}
-
-
-div#Tab a {
-width :50px;
-margin : 10px;
-text-align: center; 
-   padding: 5px 10px; margin: 0 0 1px; 
-   text-decoration: none; color: white;}
-
-div#Tab a:hover {
-	color: #411; 
-	background-color: windowframe;
-}
-
-div#Tab a span  {
-display: block;
-position : absolute;
-top : 200px;
-margin : auto;
-
-width:600px;
-height : 500px;
-z-index : auto;
-background-color:white;
-
-}
-
-div#Tab a:hover span {
-
-z-index : 0;
-
-}
-
-.small {
-border: 1px solid white;
-    cursor: pointer;
-    height: 50px;
-    margin: 0 0 5px 5px;
-    width: 50px;
-}
-
+main();
