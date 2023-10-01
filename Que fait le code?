@@ -1,0 +1,11 @@
+Le code permet de lire et écrire des fichers JSON de ventes. Calcul le total des ventes et l'enregistre dans un ficher texte. Il vérifie aussi si le fichier est existant ou non.
+La gestion est asynchrone, ce qui signifie que lorsque le code calcul, lit, écrit ou cherche un fichier; il continue son programme en même temps que de faire ces actions.
+
+
+Structure des fichiers :
+ Nous avons d'abord notre répertoire où se trouve notre code 'MonProjetVente', un fichier de notre application qui servira à lire les fichiers JSON.
+ Un dossier pour nos fichiers JSON qui permettra de calculer les ventes des différents magasins 'magasins/' (imaginons avoir trois magasins)
+ Un autre dossier où les fichiers qui ont été compter sont enregistrés sur format texte. Le code écrira le total des ventes 'magasinsTotal'. 
+ Puis le dossier node qui permet l'exécution.
+
+ Donc maintenant que nous avons notre structure, celle-ci fonctionne en parrallèle, c'est-à-dire que si le magasins1 a plus de vente que le magasin 2 celui-ci ne sera pas paralyser pendant le compte de ses ventes.
